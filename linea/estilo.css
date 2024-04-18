@@ -1,0 +1,24 @@
+button {
+    color: aquamarine;
+    background-color: brown
+      
+}
+h2 {
+    display : inline;
+}
+.padre{
+    background-color: chocolate;
+    width: 300px;
+}
+.hijo1{
+    width: 300px;
+    text-align: center;
+}
+.hioj3{
+    text-align: center;
+}
+
+img {
+    text-align: center;
+   margin: 0.78cm;
+}
