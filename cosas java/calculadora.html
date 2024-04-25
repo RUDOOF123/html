@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>suma</title>
+</head>
+<body>
+
+    <script>
+
+        let op=0; 
+        op= prompt("ingrese la operacion (1:suma, 2:resta, 3:multiplicacion, 4:division): ")
+        let nro1=0;
+        let nro2=0;
+        if(op==1){
+         nro1= prompt("ingrese el primer numero: ")
+         nro2 = prompt ("ingrese el segundo numero: ")
+         let suma = parseFloat(nro1)+parseFloat(nro2);
+         document.write("el resultaddo de la suma es de: "+suma);
+        }
+        if (op==2) {
+         nro1= prompt("ingrese el primer numero: ")
+         nro2 = prompt ("ingrese el segundo numero: ")
+         let resta = parseFloat(nro1)-parseFloat(nro2);
+         document.write("el resultaddo de la resta es de: "+resta);
+        }
+        if (op==3) {
+         nro1= prompt("ingrese el primer numero: ")
+         nro2 = prompt ("ingrese el segundo numero: ")
+         let multiplicacion = parseFloat(nro1)*parseFloat(nro2);
+         document.write("el resultaddo de la multiplicacion es de: "+multiplicacion);
+        }
+        if (op==4) {
+         nro1= prompt("ingrese el primer numero: ")
+         nro2 = prompt ("ingrese el segundo numero: ")
+         let div = parseFloat(nro1)/parseFloat(nro2);
+         document.write("el resultaddo de la division es de: "+div);
+        }
+        
+        
+
+
+        </script>
+
+
+
+
+    
+</body>
+</html>
