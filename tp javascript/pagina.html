@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tp java</title>
+</head>
+<body>
+ <script>
+        alert("1: par o impar// 2: positivo o negativo// 3: dividir el primero por el segunro")
+        alert("4:correcto o incorrecto// 5: resta menor al mayor// 6: barra o tienda")
+        let opa = prompt("ingrese el ejercisio que desea realizar");
+        
+        switch (opa){
+            case "1":
+                alert("elegiste par o impar")
+                nro=prompt("ingrese el numero")
+                if (nro%2==0){
+                    alert("el numero es par")
+                }else{
+                    alert("el numero es impar")
+                }
+                alert("oprima f5 para reiniciar")
+                break;
+
+
+            case "2":
+                alert("elegiste positivo o negativo")
+                nro=prompt("ingrese el numero")
+                if (nro<0){
+                    alert("el numero es negativo")
+                }else{
+                    if (nro>0){
+                        alert("el numero es positivo")
+                    }else{
+                        alert("flashas que cero se puede calcular?, si xd, es positivo.")
+                    }
+                }
+                alert("oprima f5 para reiniciar")
+             break;
+
+
+            case "3": 
+              alert("elegiste dividir el primero por el segundo")
+              alert("los numeros deben ser enteros")
+              let nro1= prompt("ingrese el primer numero")
+              let nro2= prompt("ingrese el segundo numero")
+              let nro3= nro1/nro2
+              if(nro3==0){
+                alert("error")
+              }else{
+                alert("el resultado es: "+nro3)
+              }
+             alert("oprima f5 para reiniciar")
+
+            break;
+
+
+            case "4":
+              let letra=prompt("ingrese una letra, puede ser a,b,c o d")
+              igual= letra.toUpperCase(letra)
+              if(letra=="A"){
+                alert("correcto")
+              }else{
+                alert("incorrecto")
+              }
+             alert("oprima f5 para reiniciar.")
+              break;
+
+
+            case "5": 
+             alert("elegiste resta mayor al menor")
+             let n1 =prompt("ingrese el primer numero")
+             let n2= prompt("ingrese el segundo numero")
+             if (n1==n2){
+                alert("son iguales")
+             }else{
+                if(n1>n2){
+                    result= n1-n2
+                    alert("el resultado es: "+result)
+                }else{
+                    result= n2-n1
+                    alert("el resultado es: "+result)
+                }
+             }
+            break;
+
+
+            case "6": 
+            alert("elegiste barra o tienda")
+            dirigir = prompt("ingrese: vino, cerbeza, refresco o agua")
+            
+                if(dirigir=="vino" || dirigir=="cerbeza" ){
+                    alert("usted debera dirigirse a la barra")
+                } else{
+                    if(dirigir=="refresco" || dirigir=="agua"){
+                        alert("usted debera dirigirse a la tienda")
+                    }
+                }
+            break;
+            default: 
+            if(opa==" "){
+                alert("asi que te pinto no poner ni un numero, mira vo, toca f5 y elegi un ejercisio")
+            }else{
+                alert("error")
+            }
+            break;
+        }
+        
+
+        
+        
+        </script>
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,36 @@
+.padre{
+    margin: 50% auto;
+    padding: 10px;
+    border: 3px solid #000000;
+    border-radius: 10px;
+    max-width: 300px;
+    text-align: center;
+    background-color: green;
+    margin-top: 10px;
+}
+.titulo{
+    color: rgb(189, 226, 43);
+}
+.pipa{
+    margin: 50% auto;
+}
+.dou{
+    margin-bottom: 10px;
+}
+.texto{
+    margin-bottom: 20px;
+}
+img{
+    border-radius: 10px;
+}
+button{
+    border: 1px solid #000000;
+    border-radius: 3px;
+    background-color: blue;
+    text-decoration: none;
+}
+button:hover{
+    background-color: rgb(73, 73, 209);
+}
+
+
