@@ -1,0 +1,255 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+    <head>
+
+        <title>Registro material informatico</title>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/main.css">
+        <script src="../js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">	
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.4.5/themes/satellite-min.css" integrity="sha256-TehzF/2QvNKhGQrrNpoOb2Ck4iGZ1J/DI4pkd2oUsBc=" crossorigin="anonymous">
+        
+    </head>
+
+    <body>
+
+        <script
+			src="https://cdn.jsdelivr.net/npm/algoliasearch@4.14.2/dist/algoliasearch.umd.js"
+			integrity="sha256-DRnoUQAweVMsVPRMhfHC5zPqUP8s2fWUqD39yBsWg+M="
+			crossorigin="anonymous"
+		></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>	
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+		<script type="module">//Conecta con la base de datos
+
+			import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+
+			const firebaseConfig = {
+				apiKey: "AIzaSyArhMpapnmPnHMqsr-DWF_iVfVW5ZOncoA",
+				authDomain: "ematp-cdd6d.firebaseapp.com",
+				databaseURL: "https://ematp-cdd6d-default-rtdb.firebaseio.com",
+				projectId: "ematp-cdd6d",
+				storageBucket: "ematp-cdd6d.appspot.com",
+				messagingSenderId: "601799982600",
+				appId: "1:601799982600:web:e1e5af5e5d1b82aa3b5bbd",
+				measurementId: "G-TJYNE66YGH"
+			};
+
+            firebase.initializeApp(firebaseConfig);
+
+            //Llenar select PCs
+            var database = firebase.database();
+            var SelectPCs = document.getElementById('pcs');
+            var opcionesPCs = database.ref('Computadoras');
+            opcionesPCs.once('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    var opcion = childSnapshot.child("Numero").val();
+                    var optionElement = document.createElement('option');
+                    optionElement.value = opcion;
+                    optionElement.textContent = opcion;
+                    SelectPCs.appendChild(optionElement);
+                });
+            });	
+
+            //Llenar select Cursos
+            var database = firebase.database();
+            var SelectCursos = document.getElementById('curso');
+            var opcionesCursos = database.ref('Cursos');
+            opcionesCursos.once('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    var opcion = childSnapshot.val();
+                    var optionElement = document.createElement('option');
+                    optionElement.value = opcion;
+                    optionElement.textContent = opcion;
+                    SelectCursos.appendChild(optionElement);
+                });
+            });	
+
+            //Llenar select Profesores
+            var database = firebase.database();
+            var SelectProfesores = document.getElementById('profesores');
+            var opcionesProfesores = database.ref('Profesores');
+            opcionesProfesores.once('value', function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    var opcion = childSnapshot.val();
+                    var optionElement = document.createElement('option');
+                    optionElement.value = opcion;
+                    optionElement.textContent = opcion;
+                    SelectProfesores.appendChild(optionElement);
+                });
+            });	
+
+            var formulario = document.getElementById('formulario');
+            var id = 0;
+
+            var referencia = database.ref('MarcelaProjectX');
+            referencia.orderByChild('MarcelaProjectX') // Asume que tienes un campo 'timestamp' en tus registros
+            .limitToLast(1) // Limita la consulta a un solo resultado (el último)
+            .once('value')
+            .then(function(snapshot) {
+                snapshot.forEach(function(childSnapshot) {
+                    id = childSnapshot.key; // Obtiene la clave del último registro
+                    id++;
+                    console.log("ID del último registro:", id);
+                });
+                formulario.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    var nombre = formulario.profesor.value;
+                    var curso = formulario.curso.value;
+                    var cargo = formulario.cargo.value;
+                    var PC = [];
+                    var PCs = formulario.pcs;
+                    var fecha = moment().format("DD/MM/YYYY");
+                    var hora = moment().format("hh:mm:ss");
+                    if (PCs) { // Verifica si 'seleccion' está definido
+                        for (var i = 0; i < PCs.length; i++) {
+                            if (PCs[i].selected) {
+                                PC.push(PCs[i].value);
+                            }
+                        }
+                    } else {
+                        console.log('El campo de selección múltiple no se encontró o no está definido.');
+                    }
+                    var detalle = formulario.detalle.value;
+
+                    var registro = {};
+                    registro[id] = {                    
+                        nombre: nombre,
+                        curso: curso,
+                        cargo: cargo,
+                        PCs_prestadas: PC,
+                        PCs_devueltas: [""],
+                        detalle: detalle,
+                        estado: "En uso",
+                        fecha: fecha,
+                        hora: hora,
+                        fechadev: ""};
+
+                    referencia.update(registro);
+                        
+                });
+            });
+
+            document.getElementById("formulario").addEventListener("submit", function(event) {
+                event.preventDefault(); 
+                $('#modalExito').modal('show');
+            });
+            document.getElementById("cerrarModal").addEventListener("click", function() {
+                window.location.reload();
+            });
+
+		</script>
+
+        <script src="js/bootstrap.min.js"></script>
+
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: #dedede;">
+            <div class="container-fluid">
+               <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                  </button>
+              <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav">
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Busqueda
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                      <li><a class="dropdown-item" href="tablaFecha.html">Fecha</a></li>
+                      <li><a class="dropdown-item disabled" href="listaPCs.html">PCs</a></li>
+                      <li><a class="dropdown-item" href="listaCursos.html">Curso</a></li>
+                      <li><a class="dropdown-item" href="listaProfesores.html">Profesor</a></li>
+                    </ul>
+                  </li>
+                  <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Prestamos
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="tablaFecha.html">Alta</a></li>
+                        <li><a class="dropdown-item disabled" href="listaPCs.html"></a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Tablas
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                          <li><a class="dropdown-item" href="listaPCs.html">PCs</a></li>
+                          <li><a class="dropdown-item" href="listaProfesores.html">Profesores</a></li>
+                          <li><a class="dropdown-item" href="listaLaboratorios.html">Laboratorios</a></li>
+                          <li><a class="dropdown-item" href="listaCursos.html">Cursos</a></li>
+                        </ul>
+                    </li>	
+                </ul>
+              </div>
+              <a class="navbar-brand" style="float: right;" href="index.html">Salir</a>
+            </div>
+        </nav>
+
+        <div class="container mt-5 col-5">
+            <h2>Alta préstamo de PC</h2>
+            <form id="formulario">
+                <div class="form-group mt-2">
+                    <label for="profesor">Profesor</label>
+                    <input type="text" class="form-control" id="profesor" list="profesores" placeholder="Nombre de profesor">
+                    <datalist id="profesores">
+                    </datalist>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="curso">Curso</label>
+                    <select class="form-control" id="curso">
+                    </select>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="cargo">Cargo</label>
+                    <select class="form-control" id="cargo">
+                        <option>Profesor</option>
+                        <option>Preceptor</option>
+                    </select>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="pcs">PCs</label>
+                    <select class="form-control" id="pcs" multiple>
+                    </select>
+                </div>
+                <div class="form-group mt-2">
+                    <label for="detalle">Detalle</label>
+                    <textarea class="form-control" id="detalle" rows="4" placeholder="Informacion adicional"></textarea>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-outline-dark mt-2">Enviar</button>
+            </form>
+
+        </div>
+
+        <div class="modal fade" id="modalExito" tabindex="-1" role="dialog" aria-labelledby="modalExitoLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalExitoLabel">Éxito</h5>
+                    </div>
+                    <div class="modal-body">
+                        Prestamo grabado con éxito.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" id="cerrarModal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+
+
+
+</html>

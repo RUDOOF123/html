@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+	<head>
+	
+		<title>Registro de PCs</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="../css/main.css">
+        <script src="../js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">	
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/instantsearch.css@7.4.5/themes/satellite-min.css" integrity="sha256-TehzF/2QvNKhGQrrNpoOb2Ck4iGZ1J/DI4pkd2oUsBc=" crossorigin="anonymous">
+        
+	</head>
+	
+	<body>
+
+		<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+		<script type="module">//Conecta con la base de datos
+
+			import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+
+			const firebaseConfig = {
+				apiKey: "AIzaSyArhMpapnmPnHMqsr-DWF_iVfVW5ZOncoA",
+				authDomain: "ematp-cdd6d.firebaseapp.com",
+				databaseURL: "https://ematp-cdd6d-default-rtdb.firebaseio.com",
+				projectId: "ematp-cdd6d",
+				storageBucket: "ematp-cdd6d.appspot.com",
+				messagingSenderId: "601799982600",
+				appId: "1:601799982600:web:e1e5af5e5d1b82aa3b5bbd",
+				measurementId: "G-TJYNE66YGH"
+			};
+
+			firebase.initializeApp(firebaseConfig);
+
+			MostrarTabla();			
+			
+		</script>
+
+		<script>	
+
+			function MostrarTabla(){
+			var i = 1;
+
+			var db = firebase.database();
+			var ref = db.ref("Computadoras");		     
+			var table = document.getElementById("tabla");
+			table.innerHTML = "";
+			diagonal = String.fromCharCode(92);
+			ref.orderByKey().on("child_added", function(snapshot){
+
+			//repite el proceso como cuantas referencias encuentre y los asigna a la lista "d" 
+			var d = snapshot.val();        
+					        
+			{
+				var row = table.insertRow(0);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+								// asigna a las celdas el valir del Child especificado
+				cell1.innerHTML = d.Numero.replace(/"/g, '').replace(diagonal, '').replace(diagonal, '');
+				cell2.innerHTML = d.Ubicacion.replace(/"/g, '');
+				cell3.innerHTML = d.Descripcion.replace(/"/g, '');
+				
+
+				i++;
+
+
+			}
+			 
+			});		
+			}
+
+			function ConsultaFecha(){	
+
+				var i = 1;
+
+				var recentPostsRef = firebase.database().ref("MarcelaProjectX");
+					     
+				var table = document.getElementById("tabla");
+					    
+				var x = document.getElementById("frm1");
+  				var text = "";
+    			text = x.elements[0].value;
+
+    			var comilla = '"';
+    			PC = comilla.concat(text,comilla);
+
+				//limpia la tabla
+				table.innerHTML = "";
+
+				recentPostsRef.orderByChild('Numero')
+				.equalTo(PC)
+				.on("child_added", function(snapshot) {
+			  		
+					console.log(snapshot.val());
+
+			  		var d = snapshot.val(); 
+
+					{
+						var row = table.insertRow(0);
+						var cell1 = row.insertCell(0);
+						var cell2 = row.insertCell(1);
+						var cell3 = row.insertCell(2);
+						
+						// asigna a las celdas el valor del Child especificado
+						cell1.innerHTML = d.Numero.replace(/"/g, '').replace(diagonal, '').replace(diagonal, '');
+						cell2.innerHTML = d.Ubicacion.replace(/"/g, '');
+						cell3.innerHTML = d.Descripcion.replace(/"/g, '');
+						
+						i++;
+					}
+
+				})
+				
+			}	
+
+			
+		</script>
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #dedede;">
+	<div class="container-fluid">
+	   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+		  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+		<ul class="navbar-nav">
+		  <li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+			  Busqueda
+			</a>
+			<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+			  <li><a class="dropdown-item" href="tablaFecha.html">Fecha</a></li>
+			  <li><a class="dropdown-item disabled" href="listaPCs.html">PCs</a></li>
+			  <li><a class="dropdown-item" href="listaCursos.html">Curso</a></li>
+			  <li><a class="dropdown-item" href="listaProfesores.html">Profesor</a></li>
+			</ul>
+		  </li>
+		  <li class="nav-item dropdown">
+			  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				Prestamos
+			  </a>
+			  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+				<li><a class="dropdown-item" href="tablaFecha.html">Alta</a></li>
+				<li><a class="dropdown-item disabled" href="listaPCs.html"></a></li>
+			  </ul>
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				  Tablas
+				</a>
+				<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+				  <li><a class="dropdown-item" href="listaPCs.html">PCs</a></li>
+				  <li><a class="dropdown-item" href="listaProfesores.html">Profesores</a></li>
+				  <li><a class="dropdown-item" href="listaLaboratorios.html">Laboratorios</a></li>
+				  <li><a class="dropdown-item" href="listaCursos.html">Cursos</a></li>
+				</ul>
+			</li>	
+		</ul>
+	  </div>
+	  <a class="navbar-brand" style="float: right;" href="index.html">Salir</a>
+	</div>
+</nav>
+
+<div class="container text-center py-5">
+		
+			<h1 class="display-2 py-2">Registro de PCs</h1>
+		
+		</div>
+			<form id="frm1">
+			
+			
+			<div class=" d-grid gap-2 d-md-flex justify-content-md-end">
+				
+					<div class="btn-group mx-2" role="group" aria-label="Button group with nested dropdown">
+					  <button type="button" class="btn btn-outline-dark"   >Alta</button>
+					  <button type="button" class="btn btn-outline-dark">Modificación</button>
+				  </div>		
+				<div class="input-group flex-nowrap w-25 mx-auto">
+  					<span class="input-group-text">PC</span>
+ 					<input type="text" class="form-control">
+ 					<input class="btn btn-outline-dark" type="button" value="Buscar" onclick="ConsultaFecha()">
+				</div>
+
+				<input class="btn btn-outline-dark" type="button" value="Reinciar filtros" onclick="MostrarTabla()">
+
+			</div>
+
+		</form>
+
+		<br>
+
+		<div>
+			<table class="table table-hover table-bordered">
+		    	<thead>
+		        	<tr class="text-center">
+		            	<th>PCs</th>
+		            	<th>Ubicacion</th>
+		                <th>Descripcion</th>
+		            </tr>
+		     	</thead>
+		    	<tbody id="tabla">                                
+		    	</tbody>
+		</div>
+
+		<script src="../js/bootstrap.min.js"></script>
+
+	</body>
+
+</html>

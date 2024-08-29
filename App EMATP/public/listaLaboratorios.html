@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+
+	<head>
+	
+		<title>Registro de Laboratorios Asignados</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+		<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+	</head>
+	
+	<body>
+
+		<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+		<script type="module">//Conecta con la base de datos
+
+			import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+
+			const firebaseConfig = {
+				apiKey: "AIzaSyArhMpapnmPnHMqsr-DWF_iVfVW5ZOncoA",
+				authDomain: "ematp-cdd6d.firebaseapp.com",
+				databaseURL: "https://ematp-cdd6d-default-rtdb.firebaseio.com",
+				projectId: "ematp-cdd6d",
+				storageBucket: "ematp-cdd6d.appspot.com",
+				messagingSenderId: "601799982600",
+				appId: "1:601799982600:web:e1e5af5e5d1b82aa3b5bbd",
+				measurementId: "G-TJYNE66YGH"
+			};
+
+			firebase.initializeApp(firebaseConfig);
+
+			MostrarTabla();	
+
+		</script>
+
+		<script>	
+
+			function MostrarTabla(){
+			var i = 1;
+
+			var db = firebase.database();
+			var ref = db.ref("Laboratorios");		     
+			var table = document.getElementById("tabla");
+			table.innerHTML = "";
+			diagonal = String.fromCharCode(92);
+			ref.orderByKey().on("child_added", function(snapshot){
+
+			//repite el proceso como cuantas referencias encuentre y los asigna a la lista "d" 
+			var d = snapshot.val();        
+					        
+			{
+				var row = table.insertRow(0);
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+				var cell5 = row.insertCell(4);
+				var cell6 = row.insertCell(5);
+                var cell7 = row.insertCell(6);
+
+				// asigna a las celdas el valir del Child especificado
+                cell1.innerHTML = d.curso.replace(/"/g, '').replace(diagonal, '').replace(diagonal, '');
+                cell2.innerHTML = d.estado.replace(/"/g, '');
+				cell3.innerHTML = d.fecha.replace(/"/g, '').replace(diagonal, '').replace(diagonal, '');
+				cell4.innerHTML = d.hora.replace(/"/g, '');
+                cell5.innerHTML = d.laboratorio.replace(/"/g, '');
+				cell6.innerHTML = d.nombre.replace(/"/g, '');
+				if(d.estado=='"En uso"'){
+
+					cell7.innerHTML = '<button type="button" class="btn btn-outline-dark" onclick=devolver(this.id) id="'+i+'">Devuelto</button>';
+	
+				}
+
+				i++;
+
+
+			}
+			 
+			});		
+
+			}
+
+			function ConsultaFecha(){	
+
+				var i = 1;
+
+				var recentPostsRef = firebase.database().ref("Laboratorios");
+					     
+				var table = document.getElementById("tabla");
+					    
+				var x = document.getElementById("frm1");
+  				var text = "";
+    			text = x.elements[0].value;
+
+    			var comilla = '"';
+    			nombre = comilla.concat(text,comilla);
+
+				//limpia la tabla	
+				table.innerHTML = "";
+
+				recentPostsRef.orderByChild('nombre')
+				.equalTo(nombre) 
+				.on("child_added", function(snapshot) {
+			  		
+					console.log(snapshot.val());
+
+			  		var d = snapshot.val(); 
+
+					{
+                        var row = table.insertRow(0);
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        var cell4 = row.insertCell(3);
+                        var cell5 = row.insertCell(4);
+                        var cell6 = row.insertCell(5);
+                        var cell7 = row.insertCell(6);
+
+                        // asigna a las celdas el valir del Child especificado
+                        cell1.innerHTML = d.curso.replace(/"/g, '').replace(diagonal, '').replace(diagonal, '');
+                        cell2.innerHTML = d.estado.replace(/"/g, '');
+                        cell3.innerHTML = d.fecha.replace(/"/g, '').replace(diagonal, '').replace(diagonal, '');
+                        cell4.innerHTML = d.hora.replace(/"/g, '');
+                        cell5.innerHTML = d.laboratorio.replace(/"/g, '');
+                        cell6.innerHTML = d.nombre.replace(/"/g, '');
+                        if(d.estado=='"En uso"'){
+
+                            cell7.innerHTML = '<button type="button" class="btn btn-outline-dark" onclick=devolver(this.id) id="'+i+'">Devuelto</button>';
+            
+                        }
+
+                        i++;
+
+                    }
+
+					const client = algoliasearch('CJHA9C1DBQ', '8711f16313090a7ffaebb372340a91cd');
+					const index = client.initIndex('laboratorios');
+					
+					index.saveObject({
+						fecha: d.fecha,
+						hora: d.hora,
+						laboratorio: d.laboratorio,
+						nombre: d.nombre,
+						curso: d.curso,
+						estado: d.estado,
+						objectID: i
+					}).then(() => {
+					// done
+					});
+
+				})
+				
+			}	
+
+			function devolver(clicked_id){
+
+				var db = firebase.database();
+				var ref = db.ref("Laboratorios");
+				const hopperRef = ref.child(clicked_id);
+				hopperRef.update({
+				  'estado': 'Devuelto'
+				});
+
+				MostrarTabla();
+				
+			}
+
+			const altaForm = document.getElementById("altaForm");
+
+// Manejar el envío del formulario
+altaForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const dni = document.getElementById("dni").value;
+    const alumno = document.getElementById("alumno").value;
+    const edad = parseInt(document.getElementById("edad").value);
+
+    // Guardar los datos en Firestore
+    db.collection("alumnos").add({
+        dni: dni,
+        alumno: alumno,
+        edad: edad
+    })
+    .then(function(docRef) {
+        console.log("Documento agregado con ID: ", docRef.id);
+        alert("Datos guardados exitosamente.");
+        altaForm.reset();
+    })
+    .catch(function(error) {
+        console.error("Error al agregar el documento: ", error);
+        alert("Hubo un error al guardar los datos.");
+    });
+});
+
+
+
+		</script>
+
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #dedede;">
+	<div class="container-fluid">
+	   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+		  </button>
+	  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+		<ul class="navbar-nav">
+		  <li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+			  Busqueda
+			</a>
+			<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+			  <li><a class="dropdown-item" href="tablaFecha.html">Fecha</a></li>
+			  <li><a class="dropdown-item disabled" href="tablaPC.html">PCs</a></li>
+			  <li><a class="dropdown-item" href="tablaCurso.html">Curso</a></li>
+			  <li><a class="dropdown-item" href="tablaProfesor.html">Profesor</a></li>
+			</ul>
+		  </li>
+		  <li class="nav-item dropdown">
+			  <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				Prestamos
+			  </a>
+			  <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+				<li><a class="dropdown-item" href="tablaFecha.html">Alta</a></li>
+				<li><a class="dropdown-item disabled" href="tablaPC.html"></a></li>
+			  </ul>
+			</li>
+			<li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+				  Tablas
+				</a>
+				<ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+				  <li><a class="dropdown-item" href="listaPCs.html">PCs</a></li>
+				  <li><a class="dropdown-item" href="listaProfesores.html">Profesores</a></li>
+				  <li><a class="dropdown-item" href="listaLaboratorios.html">Laboratorios</a></li>
+				  <li><a class="dropdown-item" href="listaCursos.html">Cursos</a></li>
+				</ul>
+			</li>	
+		</ul>
+	  </div>
+	  <a class="navbar-brand" style="float: right;" href="index.html">Salir</a>
+	</div>
+</nav>
+<div class="container text-center py-5">
+		
+			<h1 class="display-2 py-2">Registro material informatico</h1>
+		
+		</div>
+
+		<form id="frm1">
+
+			<div class=" d-grid gap-2 d-md-flex justify-content-md-end">
+				
+				<div class="input-group flex-nowrap w-25 mx-auto">
+  					<span class="input-group-text">Nombre</span>
+ 					<input type="text" id="nombre">
+ 					<input class="btn btn-outline-dark" type="button" value="Buscar" onclick="ConsultaFecha()">
+				</div>
+
+				<input class="btn btn-outline-dark" type="button" value="Reinciar filtros" onclick="MostrarTabla()">
+
+			</div>
+
+		</form>
+
+		<br>
+
+		<div>
+			<table class="table table-hover table-bordered">
+		    	<thead>
+		        	<tr>
+		            	<th>Curso</th>
+		            	<th>Estado</th>
+		                <th>Fecha</th>
+		            	<th>Hora</th>
+		            	<th>Laboratorio</th>
+		                <th>Nombre y Apellido</th>    
+		                <th></th>                                
+		            </tr>
+		     	</thead>
+		    	<tbody id="tabla">                                
+		    	</tbody>
+		</div>
+
+		<script src="js/bootstrap.min.js"></script>
+
+	</body>
+
+</html>
