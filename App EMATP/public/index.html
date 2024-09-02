@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+
+	<head>
+	
+		<title>Registro material informatico</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+		<meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<link href="https://cdn.jnsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+	</head>
+	
+	<body>
+
+		<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+		<script type="module">//Conecta con la base de datos
+
+			import 'https://www.gstatic.com/firebasejs/6.2.0/firebase-auth.js';
+
+			import {initializeApp} from 'https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js';
+
+			const firebaseConfig = {
+				apiKey: "AIzaSyArhMpapnmPnHMqsr-DWF_iVfVW5ZOncoA",
+				authDomain: "ematp-cdd6d.firebaseapp.com",
+				databaseURL: "https://ematp-cdd6d-default-rtdb.firebaseio.com",
+				projectId: "ematp-cdd6d",
+				storageBucket: "ematp-cdd6d.appspot.com",
+				messagingSenderId: "601799982600",
+				appId: "1:601799982600:web:e1e5af5e5d1b82aa3b5bbd",
+				measurementId: "G-TJYNE66YGH"
+			};
+
+			firebase.initializeApp(firebaseConfig);
+
+			
+
+		</script>
+
+		<script>
+
+
+			function IniciarSesion(){
+
+				var x = document.getElementById('frm1');
+				var usuario = "";
+				usuario = x.elements[0].value;
+				usuario = usuario.concat("@gmail.com");
+				var contraseña = "";
+				contraseña = x.elements[1].value;
+
+				console.log(usuario, contraseña);
+
+				firebase.auth().signInWithEmailAndPassword(usuario, contraseña).then(() => { location.href = 'tablaFecha.html'}).catch(function(error) {
+
+				    alert("Usuario o contraseña incorrecta");
+
+				});
+
+			}
+
+			function mostrarContrasena() {
+				var x = document.getElementById("pass");
+				var i = document.getElementById("togglePassword");
+				if (x.type == "password") {
+			    	x.type = "text";
+			    	i.classList.add('fa-eye-slash');
+			    	i.classList.remove('fa-eye');
+			  	} else {
+			    	x.type = "password";
+			    	i.classList.remove('fa-eye-slash');
+			    	i.classList.add('fa-eye');
+			  	}
+			}
+
+		</script>
+
+		<div class="container text-center py-5">
+		
+			<h1 class="display-2 py-6">APP Netbook Control</h1>
+		
+		</div>
+
+		<form id="frm1">
+			
+			<div class="input-group mb-3 w-25 mx-auto">
+			  	<span class="input-group-text" id="basic-addon1">Usuario</span>
+			  	<input type="text" class="form-control" placeholder="Usuario" aria-label="Username" aria-describedby="basic-addon1" id="email">
+			</div>
+			<div class="input-group flex-nowrap mb-3 w-25 mx-auto">
+				<span class="input-group-text" id="basic-addon1">Contraseña</span>
+				<input type="password" class="form-control" placeholder="Contraseña" aria-label="Username" aria-describedby="basic-addon1" id="pass"><br>
+				<span class="input-group-text" id="basic-addon1"><i class="far fa-eye" id="togglePassword" onclick="mostrarContrasena()"></i></span>
+			</div>
+			<div class="input-group mb-3 w-25 mx-auto">
+				<input class="btn btn-outline-dark" type="button" value="Iniciar sesion" onclick="IniciarSesion()">
+			</div>
+
+		</form>
+		
+		
+		<script src="js/bootstrap.min.js"></script>
+
+	</body>
+
+</html>
